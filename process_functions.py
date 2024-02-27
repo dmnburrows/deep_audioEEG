@@ -220,3 +220,34 @@ def split_array_into_bins(array, m):
         bins.append(array[:,start_index:end_index])
     
     return bins
+
+
+def zeromean_unitvar(array):
+    mean = np.mean(array)
+    std = np.std(array)
+    # Standardize the array
+    return((array - mean) / std)
+
+
+
+def split_array(arr, fractions, seed=3):
+    """
+    Split an array into multiple parts by fractions.
+    Fractions should be a list of values that sum to 1.
+    """
+    assert sum(fractions) == 1, "Fractions must sum to 1"
+    np.random.seed(seed)
+    # Shuffle indices
+    indices = np.arange(arr.shape[0])
+    np.random.shuffle(indices, )
+    
+    # Calculate split sizes
+    n = arr.shape[0]
+    split_sizes = [int(f * n) for f in fractions[:-1]]  # Exclude last fraction
+    split_sizes.append(n - sum(split_sizes))  # Ensure the last split takes the remainder
+    
+    # Split indices by calculated sizes
+    split_indices = np.split(indices, np.cumsum(split_sizes)[:-1])
+    
+    # Return split arrays
+    return [arr[indices] for indices in split_indices]
